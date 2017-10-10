@@ -80,9 +80,6 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
   })
 );
 
-
-
-
 module.exports = {
   createUser
 }
