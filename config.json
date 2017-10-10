@@ -1,0 +1,4 @@
+{
+  "connectionDatabase": "mongodb://localhost/serverdb",
+  "port": 6969
+}
