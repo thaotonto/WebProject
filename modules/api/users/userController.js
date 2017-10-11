@@ -24,7 +24,7 @@ Router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-Router.post('/register', function(req, res) {
+Router.post('/register', function(req, res, next) {
   let newUser = {
     username: req.body.username,
     password: req.body.password,
@@ -49,13 +49,10 @@ Router.post('/register', function(req, res) {
           if (err) {
             return next(err);
           } else {
-            if (req.body.remember === true) {
-              res.cookie('remember', req.session.passport.user);
-            }
             return res.send(req.session.passport.user);
           }
         });
-      });
+      })(req, res, next);
     }
   });
 });
