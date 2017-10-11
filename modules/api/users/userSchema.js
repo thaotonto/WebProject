@@ -14,8 +14,7 @@ const usersSchema = new Schema({
     require: true
   },
   fullname: {
-    type: String,
-    require: true
+    type: String
   },
   dob: {
     type: Date
@@ -25,7 +24,8 @@ const usersSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true
+    unique: true,
+    require: true
   },
   active: {
     type: Boolean,
