@@ -18,7 +18,8 @@ Router.post('/login', (req, res, next) => {
         if (req.body.remember === true) {
           res.cookie('remember', req.session.passport.user);
         }
-        return res.send(req.session.passport.user);
+        console.log(user);
+        return res.json({token: req.session.passport.user});
       }
     });
   })(req, res, next);
@@ -49,7 +50,7 @@ Router.post('/register', function(req, res, next) {
           if (err) {
             return next(err);
           } else {
-            return res.send(req.session.passport.user);
+            return res.json({token: req.session.passport.user});
           }
         });
       })(req, res, next);
@@ -64,7 +65,14 @@ Router.get('/logout', (req, res) => {
 });
 
 Router.get('/', (req, res, next) => {
+  // if (req.isAuthenticated()) {
+  //   console.log("Authenticated");
+  //   console.log(req.user);
+  // } else {
+  //   console.log("UnAuthenticated");
+  // }
   let token;
+  console.log(req.session);
   if (req.cookies.remember) {
     req.headers.authorization = "JWT " + req.cookies.remember;
   } else {

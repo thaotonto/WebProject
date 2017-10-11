@@ -13,18 +13,6 @@ jwtOptions.secretOrKey = 'secret';
 
 let userModel = mongoose.model('users', userSchema);
 
-passport.serializeUser(function(user, done) {
-  var payload = {id: user.id};
-  var token = jwt.sign(payload, jwtOptions.secretOrKey, {
-          expiresIn : 60*60*24*30
-        });
-  done(null, token);
-});
-
-passport.deserializeUser(function(token, done) {
-  done(null, token);
-});
-
 const createUser = (user, callback) => {
   userModel.create(user, (err, doc) => {
     if (err) {
@@ -61,24 +49,40 @@ passport.use(new LocalStrategy(
         return done(null, user);
       });
     })
-  })
-);
+  }));
 
 passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
-    userModel.findOne({
-      "_id": jwt_payload.id
-    }, function(err, user) {
-      if (err) {
-        return next(err);
-      }
-      if (!user) {
-        return next(null, false);
-      } else {
-        return next(null, user);
-      }
-    })
+  userModel.findOne({
+    "_id": jwt_payload.id
+  }, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return next(null, false);
+    } else {
+      return next(null, user);
+    }
   })
-);
+}));
+
+passport.serializeUser(function(user, done) {
+  var payload = {
+    id: user.id
+  };
+  var token = jwt.sign(payload, jwtOptions.secretOrKey, {
+    expiresIn: 60 * 60 * 24 * 30
+  });
+  done(null, token);
+});
+
+passport.deserializeUser(function(token, done) {
+  decoded = jwt.decode(token);
+  console.log(decoded);
+  userModel.findById(decoded.id, function(err, user) {
+    done(err, user);
+  });
+});
 
 module.exports = {
   createUser

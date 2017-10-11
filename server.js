@@ -4,12 +4,14 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
 const passport = require('passport');
+const cors = require('cors');
 
 const config = require('./config.json');
 
 const userApi = require('./modules/api/users/userController');
 
 var app = express();
+app.use(cors());
 
 app.use(bodyParser.json({ extended : true}));
 app.use(bodyParser.urlencoded({ extended : true}));
