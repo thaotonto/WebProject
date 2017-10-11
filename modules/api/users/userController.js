@@ -70,7 +70,7 @@ Router.get('/logout', (req, res) => {
 Router.get('/', (req, res, next) => {
   if (req.isAuthenticated()) {
     console.log('authenticated login');
-    res.json({
+    return res.json({
       token: req.session.passport.user
     });
   } else {
@@ -80,7 +80,7 @@ Router.get('/', (req, res, next) => {
       if ((req.session.passport == {})) {
         req.headers.authorization = "JWT " + req.session.passport.user;
       } else {
-        res.send("Unauthorized");
+        return res.send("Unauthorized");
       }
     }
     passport.authenticate('jwt', {
