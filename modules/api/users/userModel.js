@@ -78,7 +78,6 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(token, done) {
   decoded = jwt.decode(token);
-  console.log(decoded);
   userModel.findById(decoded.id, function(err, user) {
     done(err, user);
   });

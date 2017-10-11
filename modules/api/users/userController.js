@@ -18,8 +18,9 @@ Router.post('/login', (req, res, next) => {
         if (req.body.remember === true) {
           res.cookie('remember', req.session.passport.user);
         }
-        console.log(user);
-        return res.json({token: req.session.passport.user});
+        return res.json({
+          token: req.session.passport.user
+        });
       }
     });
   })(req, res, next);
@@ -50,7 +51,9 @@ Router.post('/register', function(req, res, next) {
           if (err) {
             return next(err);
           } else {
-            return res.json({token: req.session.passport.user});
+            return res.json({
+              token: req.session.passport.user
+            });
           }
         });
       })(req, res, next);
@@ -65,34 +68,46 @@ Router.get('/logout', (req, res) => {
 });
 
 Router.get('/', (req, res, next) => {
-  // if (req.isAuthenticated()) {
-  //   console.log("Authenticated");
-  //   console.log(req.user);
-  // } else {
-  //   console.log("UnAuthenticated");
-  // }
-  let token;
-  console.log(req.session);
-  if (req.cookies.remember) {
-    req.headers.authorization = "JWT " + req.cookies.remember;
+  if (req.isAuthenticated()) {
+    console.log('authenticated login');
+    res.json({
+      token: req.session.passport.user
+    });
   } else {
-    token = req.session.passport.user;
-    req.headers.authorization = "JWT " + req.session.passport.user;
-  }
-  passport.authenticate('jwt', {
-      session: false
-    },
-    (err, user, info) => {
-      if (err) {
-        return next(err);
-      }
-      if (!user) {
-        return res.send(info);
+    if (req.cookies.remember) {
+      req.headers.authorization = "JWT " + req.cookies.remember;
+    } else {
+      if ((req.session.passport == {})) {
+        req.headers.authorization = "JWT " + req.session.passport.user;
       } else {
-        res.json({user, token});
+        res.send("Unauthorized");
       }
-    })(req, res, next);
+    }
+    passport.authenticate('jwt', {
+        session: false
+      },
+      (err, user, info) => {
+        if (err) {
+          return next(err);
+        }
+        if (!user) {
+          return res.send(info);
+        } else {
+          req.logIn(user, function(err) {
+            if (err) {
+              return next(err);
+            } else {
+              console.log('access token login');
+              return res.json({
+                token: req.session.passport.user
+              });
+            }
+          });
+        }
+      })(req, res, next);
+  }
 });
+
 
 
 module.exports = Router;

@@ -12,7 +12,7 @@ const userApi = require('./modules/api/users/userController');
 
 var app = express();
 app.use(cors());
-
+app.options('*', cors());
 app.use(bodyParser.json({ extended : true}));
 app.use(bodyParser.urlencoded({ extended : true}));
 app.use(cookieParser());
