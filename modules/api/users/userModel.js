@@ -46,7 +46,13 @@ passport.use(new LocalStrategy(
             message: 'Incorrect password.'
           });
         }
-        return done(null, user);
+        let payload = {
+          id: user.id
+        };
+        let token = jwt.sign(payload, jwtOptions.secretOrKey, {
+          expiresIn: 60 * 60 * 24 * 3
+        });
+        return done(null, token);
       });
     })
   }));
@@ -66,22 +72,22 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
   })
 }));
 
-passport.serializeUser(function(user, done) {
-  var payload = {
-    id: user.id
-  };
-  var token = jwt.sign(payload, jwtOptions.secretOrKey, {
-    expiresIn: 60 * 60 * 24 * 30
-  });
-  done(null, token);
-});
-
-passport.deserializeUser(function(token, done) {
-  decoded = jwt.decode(token);
-  userModel.findById(decoded.id, function(err, user) {
-    done(err, user);
-  });
-});
+// passport.serializeUser(function(user, done) {
+//   var payload = {
+//     id: user.id
+//   };
+//   var token = jwt.sign(payload, jwtOptions.secretOrKey, {
+//     expiresIn: 60 * 60 * 24 * 30
+//   });
+//   done(null, token);
+// });
+//
+// passport.deserializeUser(function(token, done) {
+//   decoded = jwt.decode(token);
+//   userModel.findById(decoded.id, function(err, user) {
+//     done(err, user);
+//   });
+// });
 
 module.exports = {
   createUser
